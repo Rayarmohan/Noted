@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   static const Color primaryColor = Color(0xFFFFBF00);
@@ -12,9 +13,15 @@ class AppTheme {
       brightness: Brightness.light,
       secondary: secondaryColor,
     ),
-    appBarTheme: const AppBarTheme(
+    textTheme: GoogleFonts.interTextTheme(),
+    appBarTheme: AppBarTheme(
       centerTitle: true,
       elevation: 0,
+      titleTextStyle: GoogleFonts.inter(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: const Color(0xFF1C1B1F),
+      ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -50,9 +57,15 @@ class AppTheme {
       brightness: Brightness.dark,
       secondary: secondaryColor,
     ),
-    appBarTheme: const AppBarTheme(
+    textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
+    appBarTheme: AppBarTheme(
       centerTitle: true,
       elevation: 0,
+      titleTextStyle: GoogleFonts.inter(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: const Color(0xFFE6E1E5),
+      ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,

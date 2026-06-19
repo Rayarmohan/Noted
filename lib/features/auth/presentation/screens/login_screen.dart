@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/auth_bloc.dart';
-import '../../bloc/auth_event.dart';
 import '../../bloc/auth_state.dart';
 import 'package:noted/core/theme/theme_cubit.dart';
 import 'package:noted/core/widgets/custom_text_field.dart';
-import 'package:noted/core/widgets/loading_button.dart';
 import 'package:noted/core/utils/snackbar.dart';
 import 'package:noted/core/utils/validators.dart';
+import '../widgets/auth_widgets.dart';
 import 'signup_screen.dart';
 import 'package:noted/features/notes/presentation/screens/dashboard_screen.dart';
+import '../../data/actions/auth_actions.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -33,8 +33,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final isSmallScreen = size.width < 400;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Scaffold(
       body: BlocListener<AuthBloc, AuthState>(
@@ -46,139 +46,173 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             );
           } else if (state is AuthError) {
-            showSnackBar(context, state.message,
-                color: Theme.of(context).colorScheme.error);
+            showSnackBar(context, state.message, color: colorScheme.error);
           }
         },
-        child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
-              child: SizedBox(
-                width: isSmallScreen ? double.infinity : 400,
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Icon(
-                        Icons.note_alt_outlined,
-                        size: isSmallScreen ? 64 : 80,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Welcome Back',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Sign in to continue',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant,
-                            ),
-                      ),
-                      const SizedBox(height: 32),
-                      CustomTextField(
-                        controller: _emailController,
-                        label: 'Email',
-                        hint: 'Enter your email',
-                        prefixIcon: Icons.email_outlined,
-                        keyboardType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.next,
-                        validator: Validators.email,
-                      ),
-                      const SizedBox(height: 16),
-                      CustomTextField(
-                        controller: _passwordController,
-                        label: 'Password',
-                        hint: 'Enter your password',
-                        prefixIcon: Icons.lock_outlined,
-                        obscureText: _obscurePassword,
-                        textInputAction: TextInputAction.done,
-                        validator: Validators.password,
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscurePassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                          ),
-                          onPressed: () {
-                            setState(
-                                () => _obscurePassword = !_obscurePassword);
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      BlocBuilder<AuthBloc, AuthState>(
-                        builder: (context, state) {
-                          return LoadingButton(
-                            label: 'Sign In',
-                            isLoading: state is AuthLoading,
-                            onPressed: _onLogin,
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+        child: Stack(
+          children: [
+            // Blob decoration (top-right)
+            Positioned(
+              top: -40,
+              right: -40,
+              child: BlobDecoration(color: colorScheme.primary),
+            ),
+            SafeArea(
+              child: Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 420),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Text(
-                            "Don't have an account? ",
-                            style: Theme.of(context).textTheme.bodyMedium,
+                          const SizedBox(height: 48),
+                          // App icon
+                          Container(
+                            width: 56,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              color: colorScheme.primaryContainer,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Icon(
+                              Icons.note_alt_outlined,
+                              size: 28,
+                              color: colorScheme.primary,
+                            ),
                           ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => const SignupScreen(),
+                          const SizedBox(height: 24),
+                          Text(
+                            'Welcome back',
+                            style: theme.textTheme.headlineMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            'Sign in to continue to Noted',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          const SizedBox(height: 40),
+
+                          // Email field
+                          FieldLabel(label: 'Email'),
+                          const SizedBox(height: 6),
+                          CustomTextField(
+                            controller: _emailController,
+                            hint: 'Enter your email',
+                            prefixIcon: Icons.mail_outline_rounded,
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.next,
+                            validator: Validators.email,
+                          ),
+                          const SizedBox(height: 20),
+
+                          // Password field
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              FieldLabel(label: 'Password'),
+                              TextButton(
+                                onPressed: () {},
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                  minimumSize: Size.zero,
+                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                 ),
+                                child: const Text('Forgot?'),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          CustomTextField(
+                            controller: _passwordController,
+                            hint: 'Enter your password',
+                            prefixIcon: Icons.lock_outline_rounded,
+                            obscureText: _obscurePassword,
+                            textInputAction: TextInputAction.done,
+                            validator: Validators.password,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                              ),
+                              onPressed: () => setState(
+                                  () => _obscurePassword = !_obscurePassword),
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+
+                          // Sign in button
+                          BlocBuilder<AuthBloc, AuthState>(
+                            builder: (context, state) {
+                              return PillButton(
+                                label: 'Sign in',
+                                isLoading: state is AuthLoading,
+                                onPressed: () => AuthActions.onLogin(context, _formKey, _emailController.text, _passwordController.text),
                               );
                             },
-                            child: const Text('Sign Up'),
+                          ),
+                          const SizedBox(height: 24),
+
+                          // Sign up link
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Don't have an account? ",
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const SignupScreen(),
+                                  ),
+                                ),
+                                child: Text(
+                                  'Sign up',
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: colorScheme.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+
+                          // Theme toggle
+                          Center(
+                            child: IconButton(
+                              icon: Icon(
+                                context.watch<ThemeCubit>().state == ThemeMode.dark
+                                    ? Icons.light_mode_outlined
+                                    : Icons.dark_mode_outlined,
+                                size: 20,
+                              ),
+                              onPressed: () =>
+                                  context.read<ThemeCubit>().toggleTheme(),
+                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      Center(
-                        child: IconButton(
-                          icon: Icon(
-                            context.watch<ThemeCubit>().state == ThemeMode.dark
-                                ? Icons.light_mode
-                                : Icons.dark_mode,
-                          ),
-                          onPressed: () {
-                            context.read<ThemeCubit>().toggleTheme();
-                          },
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 
-  void _onLogin() {
-    if (_formKey.currentState!.validate()) {
-      context.read<AuthBloc>().add(
-            LoginSubmitted(
-              email: _emailController.text.trim(),
-              password: _passwordController.text,
-            ),
-          );
-    }
-  }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
-  final String label;
+  final String? label;
   final String? hint;
   final IconData? prefixIcon;
   final bool obscureText;
@@ -15,7 +15,7 @@ class CustomTextField extends StatelessWidget {
   const CustomTextField({
     super.key,
     required this.controller,
-    required this.label,
+    this.label,
     this.hint,
     this.prefixIcon,
     this.obscureText = false,
@@ -36,8 +36,8 @@ class CustomTextField extends StatelessWidget {
       textInputAction: textInputAction,
       maxLines: maxLines,
       decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
+        labelText: label ?? hint,
+        hintText: label != null ? hint : null,
         prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
         suffixIcon: suffixIcon,
       ),
