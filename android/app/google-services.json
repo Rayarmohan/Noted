@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "867464637904",
+    "project_id": "noted-cf2b1",
+    "storage_bucket": "noted-cf2b1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:867464637904:android:f1e6d651521e672ee81dd5",
+        "android_client_info": {
+          "package_name": "com.noted.rayar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBR4tLz2geLbCsGFk7C9mmsLHA17oJF7fE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
