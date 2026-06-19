@@ -1,6 +1,6 @@
 # Noted
 
-A modern, private note-taking app built with Flutter and Firebase. Capture ideas instantly, organize them beautifully, and keep them safe behind your account.
+A modern, private note-taking app built with Flutter and Firebase with Bloc state management. Capture ideas instantly, organize them beautifully, and keep them safe behind your account.
 
 <p align="center">
   <img src="assets/intro1.png" width="200" alt="Intro 1" />
